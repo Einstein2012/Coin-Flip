@@ -60,10 +60,15 @@ function flip() {
 function updateStats() {
   const { history } = state;
 
-  // Last 5 pills
+ // Show only the most recent result
+if (!state.lastResult) {
+  lastFiveContainer.textContent = '—';
+} else {
   lastFiveContainer.innerHTML = `
     <span class="pill pill-${state.lastResult}">${state.lastResult}</span>
-`;
+  `;
+}
+
 
   // Percentages
   if (history.length === 0) {
