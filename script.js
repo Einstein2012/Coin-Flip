@@ -10,14 +10,14 @@ const state = {
 };
 
 // ── DOM References ─────────────────────────────────────────────
-const coin          = document.getElementById('coin');
-const flipBtn       = document.getElementById('flip-btn');
-const speakBtn      = document.getElementById('speak-btn');
-const lastResultEl  = document.getElementById('last-result');
-const headsPctEl    = document.getElementById('heads-pct');
-const tailsPctEl    = document.getElementById('tails-pct');
+const coin         = document.getElementById('coin');
+const flipBtn      = document.getElementById('flip-btn');
+const speakBtn     = document.getElementById('speak-btn');
+const lastResultEl = document.getElementById('last-result');
+const headsPctEl   = document.getElementById('heads-pct');
+const tailsPctEl   = document.getElementById('tails-pct');
 
-const FLIP_MS = 700; // Must match --flip-duration in style.css
+const FLIP_MS = 700;
 
 // ── Flip ───────────────────────────────────────────────────────
 function flip() {
@@ -28,15 +28,22 @@ function flip() {
   const result = Math.random() < 0.5 ? 'H' : 'T';
   const fullResult = result === 'H' ? 'Heads' : 'Tails';
 
-  coin.classList.remove('flipping-heads', 'flipping-tails');
-  coin.style.transform = '';
-  void coin.offsetWidth;
+  // Remove any previous state
+  coin.classList.remove('flipping', 'show-tails');
+  void coin.offsetWidth; // force reflow
 
-  coin.classList.add(result === 'H' ? 'flipping-heads' : 'flipping-tails');
+  // Trigger flip animation
+  coin.classList.add('flipping');
 
   setTimeout(() => {
-    coin.classList.remove('flipping-heads', 'flipping-tails');
-    coin.style.transform = result === 'H' ? 'rotateY(0deg)' : 'rotateY(180deg)';
+    coin.classList.remove('flipping');
+
+    // Show correct face
+    if (result === 'T') {
+      coin.classList.add('show-tails');
+    } else {
+      coin.classList.remove('show-tails');
+    }
 
     state.history.push(result);
     state.lastResult = fullResult;
@@ -51,19 +58,14 @@ function flip() {
 function updateStats() {
   const { history } = state;
 
-  // Most recent result as a single pill
   if (history.length === 0) {
     lastResultEl.textContent = '—';
-  } else {
-    const latest = history[history.length - 1];
-    lastResultEl.innerHTML = `<span class="pill pill-${latest}">${latest}</span>`;
-  }
-
-  // Percentages
-  if (history.length === 0) {
     headsPctEl.textContent = '—';
     tailsPctEl.textContent = '—';
   } else {
+    const latest = history[history.length - 1];
+    lastResultEl.innerHTML = `<span class="pill pill-${latest}">${latest}</span>`;
+
     const heads = history.filter(r => r === 'H').length;
     const tails = history.length - heads;
     headsPctEl.textContent = `${((heads / history.length) * 100).toFixed(1)}%`;

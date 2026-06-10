@@ -110,6 +110,13 @@ main {
   transform-style: preserve-3d;
   border-radius: 50%;
   filter: drop-shadow(0 8px 28px rgba(212, 160, 23, 0.3));
+  transform: rotateY(0deg);
+  transition: transform 0.1s;
+}
+
+/* When showing tails, rotate 180deg */
+.coin.show-tails {
+  transform: rotateY(180deg);
 }
 
 .coin-face {
@@ -164,26 +171,21 @@ main {
   text-shadow: 0 2px 4px rgba(255,255,255,0.5);
 }
 
-/* ── Flip Animations ────────────────────────────────────────── */
-
-/* Lands on heads: spins 10 full rotations, ends at 0° (heads visible) */
-@keyframes flipToHeads {
+/* ── Flip Animation ─────────────────────────────────────────── */
+@keyframes flipSpin {
   0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(3600deg); }
+  50%  { transform: rotateY(900deg); }
+  100% { transform: rotateY(1800deg); }
 }
 
-/* Lands on tails: spins 10 full rotations + 180°, ends at 3780° = 180° (tails visible) */
-@keyframes flipToTails {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(3780deg); }
+@keyframes flipSpinFromTails {
+  0%   { transform: rotateY(180deg); }
+  50%  { transform: rotateY(1080deg); }
+  100% { transform: rotateY(1980deg); }
 }
 
-.coin.flipping-heads {
-  animation: flipToHeads var(--flip-duration) cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.coin.flipping-tails {
-  animation: flipToTails var(--flip-duration) cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.coin.flipping {
+  animation: flipSpin var(--flip-duration) ease-in-out;
 }
 
 /* ── Flip Button ────────────────────────────────────────────── */
@@ -251,12 +253,6 @@ main {
   font-size: 0.75rem;
 }
 
-.result-pills {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
-
 .pill {
   width: 26px;
   height: 26px;
@@ -294,22 +290,9 @@ main {
 
 /* ── Reduced Motion ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .coin.flipping-heads,
-  .coin.flipping-tails {
+  .coin.flipping {
     animation-duration: 0.01ms !important;
   }
 }
 
-/* ── Mobile ─────────────────────────────────────────────────── */
-@media (max-width: 400px) {
-  .coin {
-    width: 145px;
-    height: 145px;
-  }
-  .coin-symbol {
-    font-size: 3.5rem;
-  }
-  header h1 {
-    font-size: 1.3rem;
-  }
-}
+/* ── Mobile ────────────────────────
