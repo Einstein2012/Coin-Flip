@@ -61,14 +61,9 @@ function updateStats() {
   const { history } = state;
 
   // Last 5 pills
-  const last5 = history.slice(-5);
-  if (last5.length === 0) {
-    lastFiveEl.textContent = '—';
-  } else {
-    lastFiveEl.innerHTML = last5
-      .map(r => `<span class="pill pill-${r}">${r}</span>`)
-      .join('');
-  }
+  lastFiveContainer.innerHTML = `
+    <span class="pill pill-${state.lastResult}">${state.lastResult}</span>
+`;
 
   // Percentages
   if (history.length === 0) {
