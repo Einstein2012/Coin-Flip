@@ -61,7 +61,7 @@ function updateStats() {
   const { history } = state;
 
   // Last 5 pills
-  const last5 = history.slice(-1);
+  const last5 = history.slice(-5);
   if (last5.length === 0) {
     lastFiveEl.textContent = '—';
   } else {
