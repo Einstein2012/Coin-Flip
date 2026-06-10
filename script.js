@@ -10,12 +10,12 @@ const state = {
 };
 
 // ── DOM References ─────────────────────────────────────────────
-const coin       = document.getElementById('coin');
-const flipBtn    = document.getElementById('flip-btn');
-const speakBtn   = document.getElementById('speak-btn');
-const lastFiveEl = document.getElementById('last-five-results');
-const headsPctEl = document.getElementById('heads-pct');
-const tailsPctEl = document.getElementById('tails-pct');
+const coin          = document.getElementById('coin');
+const flipBtn       = document.getElementById('flip-btn');
+const speakBtn      = document.getElementById('speak-btn');
+const lastResultEl  = document.getElementById('last-result');
+const headsPctEl    = document.getElementById('heads-pct');
+const tailsPctEl    = document.getElementById('tails-pct');
 
 const FLIP_MS = 700; // Must match --flip-duration in style.css
 
@@ -28,25 +28,16 @@ function flip() {
   const result = Math.random() < 0.5 ? 'H' : 'T';
   const fullResult = result === 'H' ? 'Heads' : 'Tails';
 
-  // Clear all animation/result classes and any inline transform
   coin.classList.remove('flipping-heads', 'flipping-tails');
   coin.style.transform = '';
-
-  // Force reflow so the browser registers the class removal
   void coin.offsetWidth;
 
-  // Start the spin animation
   coin.classList.add(result === 'H' ? 'flipping-heads' : 'flipping-tails');
 
   setTimeout(() => {
-    // Remove the animation class
     coin.classList.remove('flipping-heads', 'flipping-tails');
-
-    // Set the final resting transform directly via inline style.
-    // Heads = 0deg (front face visible), Tails = 180deg (back face visible).
     coin.style.transform = result === 'H' ? 'rotateY(0deg)' : 'rotateY(180deg)';
 
-    // Update state & UI
     state.history.push(result);
     state.lastResult = fullResult;
     updateStats();
@@ -60,15 +51,13 @@ function flip() {
 function updateStats() {
   const { history } = state;
 
- // Show only the most recent result
-if (!state.lastResult) {
-  lastFiveContainer.textContent = '—';
-} else {
-  lastFiveContainer.innerHTML = `
-    <span class="pill pill-${state.lastResult}">${state.lastResult}</span>
-  `;
-}
-
+  // Most recent result as a single pill
+  if (history.length === 0) {
+    lastResultEl.textContent = '—';
+  } else {
+    const latest = history[history.length - 1];
+    lastResultEl.innerHTML = `<span class="pill pill-${latest}">${latest}</span>`;
+  }
 
   // Percentages
   if (history.length === 0) {
@@ -106,7 +95,6 @@ function speak(text) {
 flipBtn.addEventListener('click', flip);
 speakBtn.addEventListener('click', speakResult);
 
-// Spacebar or Enter on the page body triggers a flip
 document.addEventListener('keydown', (e) => {
   if ((e.code === 'Space' || e.code === 'Enter') && e.target === document.body) {
     e.preventDefault();
